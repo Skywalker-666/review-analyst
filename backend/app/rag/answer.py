@@ -16,10 +16,17 @@ from app.ml.aspects import FAKE_THRESHOLD
 from app.rag.search import intent, search
 
 SYSTEM = """You analyse customer reviews of one product for a shopper.
-Answer ONLY from the numbered reviews provided. Cite every claim with the review number like [#12].
+Answer ONLY from the numbered reviews provided. Cite every claim with the review number in exactly
+this format: [#12]. Do not write "Review #12".
 If the reviews do not cover the question, say so plainly. Never invent reviews or numbers.
 Keep it short: 2-5 sentences or a few bullets. Mention how many of the shown reviews agree when useful."""
 _CITE = re.compile(r"\[#(\d+)\]")
+# LLMs don't always follow the format: "Review #12", "review 12", "(#12)", "#12".
+_LOOSE = re.compile(r"(?<!\[)\(?(?:\breviews?\s*)?#\s?(\d+)\)?(?!\])|\breview\s+(\d+)\b", re.I)
+
+
+def _normalize_citations(text: str) -> str:
+    return _LOOSE.sub(lambda m: f"[#{m.group(1) or m.group(2)}]", text)
 
 
 def _context(found: list[dict]) -> str:
@@ -75,7 +82,7 @@ def answer(question: str, reviews: list[dict], exclude_fake: bool = True) -> dic
             text, notice = _offline(question, found), f"LLM unavailable, used offline mode ({e})"
     else:
         text = _offline(question, found)
-    text, used = _clean_citations(text, allowed)
+    text, used = _clean_citations(_normalize_citations(text), allowed)
     citations = [{"id": i, "text": by_id[i]["text"], "rating": by_id[i].get("rating"),
                   "fake_prob": by_id[i].get("fake_prob")} for i in used]
     out = {**base, "answer": text, "citations": citations, "mode": mode}
