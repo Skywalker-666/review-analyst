@@ -70,3 +70,13 @@ def test_loose_citation_formats_are_recognised(monkeypatch):
     assert [c["id"] for c in r["citations"]] == [1, 3]
     assert "[#1]" in r["answer"] and "99" not in r["answer"]
     assert "[[" not in r["answer"] and "]]" not in r["answer"]
+
+
+def test_citation_normalisation_formats():
+    from app.rag.answer import _normalize_citations as norm
+    assert norm("Review #156 says x") == "[#156] says x"
+    assert norm("see (#7)") == "see [#7]"
+    assert norm("grouped [#126, #209]") == "grouped [#126], [#209]"
+    assert norm("grouped [126, 209 and 3]") == "grouped [#126], [#209], [#3]"
+    assert norm("already ok [#12], [#7]") == "already ok [#12], [#7]"
+    assert norm("(#126, #209)") == "[#126], [#209]"
