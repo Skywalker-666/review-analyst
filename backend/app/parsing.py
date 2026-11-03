@@ -8,7 +8,7 @@ from __future__ import annotations
 import csv
 import io
 
-MAX_REVIEWS = 300
+MAX_REVIEWS = 150  # the free server has ~0.1 CPU; keeps analysis under ~20 s
 MAX_TEXT = 2000
 TEXT_KEYS = ("review", "text", "review_text", "reviewtext", "body", "content", "comment", "review body")
 RATING_KEYS = ("rating", "stars", "star_rating", "score", "overall")

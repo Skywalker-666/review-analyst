@@ -19,6 +19,7 @@ import joblib
 import numpy as np
 
 MODEL_DIR = Path(os.getenv("MODEL_DIR", Path(__file__).resolve().parents[2] / "models"))
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")  # one thread on the server anyway
 MAX_LEN = 128
 BATCH = 32
 

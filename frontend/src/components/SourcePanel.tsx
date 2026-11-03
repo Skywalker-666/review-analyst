@@ -46,7 +46,7 @@ export default function SourcePanel({ busy, setBusy, onLoaded }: Props) {
       <h2 id="src-title">1. Pick reviews</h2>
       <p className="muted small">
         Sample products: 250 real Amazon-style reviews each, about half written by a computer. Or upload your own CSV
-        with a <code>review</code> column and an optional <code>rating</code> column (max 300 reviews).
+        with a <code>review</code> column and an optional <code>rating</code> column (max 150 reviews).
       </p>
       <div className="row">
         {products.map((p) => (

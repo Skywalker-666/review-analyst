@@ -14,7 +14,7 @@ Paste or upload product reviews and get three things back:
 
 | Area | What's inside |
 |---|---|
-| Deep learning | ELECTRA-small (14M params) fine-tuned on 32k labelled reviews, exported to ONNX and quantized to int8, so it runs on a free 512 MB server with no PyTorch |
+| Deep learning | ELECTRA-small (13.5M params) fine-tuned on 32k labelled reviews, exported to ONNX and quantized to int8, so it runs on a free 512 MB server with no PyTorch |
 | Classic ML | TF-IDF + logistic regression for sentiment, and a fake-review baseline the transformer has to beat |
 | NLP | Sentence splitting, an aspect lexicon, sentence-level aspect sentiment |
 | RAG | BM25 retrieval written from scratch, aspect-term query expansion, intent-aware reranking ("hate" → negative reviews first), citation validation |
@@ -28,9 +28,12 @@ Paste or upload product reviews and get three things back:
 
 | Task | Model | Accuracy | F1 |
 |---|---|---|---|
-| Fake review | Fine-tuned ELECTRA-small, int8 ONNX | _pending_ | _pending_ |
+| Fake review | **Fine-tuned ELECTRA-small, int8 ONNX (14 MB)** | **97.6%** | **97.6%** |
 | Fake review | Baseline: TF-IDF (words + char 3-5) + logistic regression | 94.8% | 94.8% |
 | Sentiment (human reviews, 1-2★ vs 4-5★) | TF-IDF + logistic regression | 92.8% | 71.4% (negative class) |
+
+Fine-tuning cuts the baseline's error rate by more than half (5.2% → 2.4%). Int8 quantization shrinks the model
+from 54 MB to 14 MB with no accuracy loss (fp32 scored 97.2%). On the four demo products the detector scores 97-98%.
 
 The sentiment model is trained on human-written reviews only. Computer-generated reviews often have a star rating
 that doesn't match their text, and dropping them raised negative-class F1 from 0.51 to 0.71.
