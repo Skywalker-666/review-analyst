@@ -1,0 +1,29 @@
+# Render Blueprint for the backend API (free tier, 512 MB RAM).
+# Render runs this in its own container behind its HTTPS proxy; the API is
+# public on purpose (it is a public demo) and stores no user data.
+# The build downloads the trained models from this repo's GitHub Release
+# (checksum-verified) and precomputes the sample analysis.
+services:
+  - type: web
+    name: review-analyst-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt && python -m app.fetch_models && python -m app.sample
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: LLM_API_KEY
+        sync: false          # paste your Groq key in the Render dashboard
+      - key: LLM_BASE_URL
+        value: https://api.groq.com/openai/v1
+      - key: LLM_MODEL
+        value: openai/gpt-oss-120b
+      - key: ALLOWED_ORIGINS
+        value: https://skywalker-666.github.io
+      - key: RATE_LIMIT_PER_MIN
+        value: "20"
+      - key: ORT_THREADS
+        value: "1"
