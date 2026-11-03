@@ -59,3 +59,14 @@ def test_llm_failure_falls_back(monkeypatch):
     monkeypatch.setattr(llm, "chat", boom)
     r = rag.answer("how is the battery", REVIEWS)
     assert r["mode"] == "offline" and "notice" in r
+
+
+def test_loose_citation_formats_are_recognised(monkeypatch):
+    """Seen live: the LLM wrote 'Review #1' instead of '[#1]', and no sources showed."""
+    monkeypatch.setenv("LLM_API_KEY", "test")
+    monkeypatch.setattr(llm, "chat", lambda messages, tools=None, timeout=30.0: {
+        "content": "Review #1 says it dies fast. (#3) disagrees, and review 99 is made up. [#3] again."})
+    r = rag.answer("how is the battery", REVIEWS)
+    assert [c["id"] for c in r["citations"]] == [1, 3]
+    assert "[#1]" in r["answer"] and "99" not in r["answer"]
+    assert "[[" not in r["answer"] and "]]" not in r["answer"]

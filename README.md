@@ -8,7 +8,10 @@ Paste or upload product reviews and get three things back:
 3. **Answers to questions** like *"What do people hate about the sound?"*, grounded in the reviews and
    **citing them** as [#id] (RAG). Citations are checked, so an answer can't point at a review that doesn't exist.
 
-**🚀 Live demo:** _added after deploy_
+**🚀 Live demo: [skywalker-666.github.io/review-analyst](https://skywalker-666.github.io/review-analyst/)** · API health: [review-analyst-api.onrender.com/api/health](https://review-analyst-api.onrender.com/api/health)
+
+> The backend runs on Render's free tier and sleeps when idle, so the first request can take about 50 seconds.
+> Pick a sample product, then ask a question.
 
 ## What it shows
 
