@@ -21,8 +21,10 @@ export default function AspectChart({ aspects }: { aspects: AspectStat[] }) {
             <YAxis type="category" dataKey="aspect" width={150} tick={{ fontSize: 12 }} />
             <Tooltip formatter={(v: number, n: string) => [Math.abs(v), n]} />
             <Legend />
-            <Bar dataKey="Negative" stackId="s" fill="#ef4444" />
-            <Bar dataKey="Positive" stackId="s" fill="#22c55e" radius={[0, 4, 4, 0]} />
+            {/* No animation: Recharts animates from the previous chart's row positions,
+                so after switching products the bars briefly sat beside the wrong labels. */}
+            <Bar dataKey="Negative" stackId="s" fill="#ef4444" isAnimationActive={false} />
+            <Bar dataKey="Positive" stackId="s" fill="#22c55e" radius={[0, 4, 4, 0]} isAnimationActive={false} />
           </BarChart>
         </ResponsiveContainer>
       </div>

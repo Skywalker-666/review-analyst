@@ -22,10 +22,12 @@ If the reviews do not cover the question, say so plainly. Never invent reviews o
 Keep it short: 2-5 sentences or a few bullets. Mention how many of the shown reviews agree when useful."""
 _CITE = re.compile(r"\[#(\d+)\]")
 # LLMs don't always follow the format: "Review #12", "review 12", "(#12)", "#12".
-_LOOSE = re.compile(r"(?<!\[)\(?(?:\breviews?\s*)?#\s?(\d+)\)?(?!\])|\breview\s+(\d+)\b", re.I)
+_GROUP = re.compile(r"\[\s*#?\s*\d+(?:\s*(?:,|and|&)\s*#?\s*\d+)+\s*\]", re.I)  # [#1, #2] / [1, 2]
+_LOOSE = re.compile(r"(?<!\[)\(?(?:\breviews?\s*)?#\s?(\d+)(?!\d)\)?(?!\])|\breview\s+(\d+)\b", re.I)
 
 
 def _normalize_citations(text: str) -> str:
+    text = _GROUP.sub(lambda m: ", ".join(f"[#{n}]" for n in re.findall(r"\d+", m.group(0))), text)
     return _LOOSE.sub(lambda m: f"[#{m.group(1) or m.group(2)}]", text)
 
 
